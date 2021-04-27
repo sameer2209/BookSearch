@@ -18,7 +18,8 @@
             android:id="@+id/book_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Book Name" />
+            android:text="Book Name"
+            android:textSize="20dp"/>
 
 
         <TextView
@@ -31,6 +32,7 @@
             android:id="@+id/book_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Author Name"/>
+            android:text="Author Name"
+            android:textSize="16dp"/>
     </LinearLayout>
 </LinearLayout>
