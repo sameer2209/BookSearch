@@ -22,6 +22,37 @@ public class QueryUtils {
 
     private static String LOG_TAG = QueryUtils.class.getName();
 
+    /*
+    Build search query url string
+    */
+    public static String buildRequestQueryString(String searchQuery, String BASE_QUERY){
+        StringBuilder requestURL = new StringBuilder(BASE_QUERY);
+        String searchTerms[] = getSearchTerms(searchQuery);
+        String searchTermsString = buildSearchTermsString(searchTerms);
+        requestURL.append(searchTermsString);
+//        requestURL.append("&");
+//        requestURL.append("maxResults=10");
+        Log.i(LOG_TAG, "requestURL string is: " + requestURL);
+        return String.valueOf(requestURL);
+    }
+
+    private static String[] getSearchTerms(String searchQuery){
+        return searchQuery.split(" ");
+    }
+
+    /*
+    Build the query search terms string separated by the '+' operator
+     */
+    private static String buildSearchTermsString(String[] searchTerms){
+        StringBuilder searchTermsString = new StringBuilder();
+        int i;
+        for(i=0; i<searchTerms.length-1; i++)
+            searchTermsString.append(searchTerms[i]).append("+");
+        searchTermsString.append(searchTerms[i]);
+        Log.i(LOG_TAG, "searchTermsString is: " + searchTermsString);
+        return String.valueOf(searchTermsString);
+    }
+
     public static List<Book> fetchBooks(String requestURL){
         if(requestURL == null || requestURL.isEmpty())
             return null;
@@ -70,7 +101,7 @@ public class QueryUtils {
     }
 
     private static String extractAuthorsString(JSONArray authors){
-        if(authors.length() == 0)
+        if(authors == null)
             return null;
         StringBuilder authorString = new StringBuilder();
         for(int i=0;i<authors.length();i++){
