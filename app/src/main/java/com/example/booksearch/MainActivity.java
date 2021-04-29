@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private final String LOG_TAG = MainActivity.class.getName();
     private BookAdapter bookAdapter = null;
+    private TextView emptyStateTextView = null;
     List<Book> books =  new ArrayList<Book>();
 
     @Override
@@ -34,6 +36,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         ListView booksList = findViewById(R.id.books_list);
 
         EditText searchQueryEditText = findViewById(R.id.search_edit_text);
+
+        emptyStateTextView = findViewById(R.id.empty_state_text_view);
+        emptyStateTextView.setVisibility(View.INVISIBLE);
 
         Button searchButton = findViewById(R.id.search_button);
         searchButton.setOnClickListener(new View.OnClickListener() {
@@ -80,10 +85,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoadFinished(@NonNull Loader<List<Book>> loader, List<Book> data) {
         Log.i(LOG_TAG, "inside onLoadFinished");
         bookAdapter.clear();
-        if(data != null)
+        if(data != null && data.size() != 0){
             bookAdapter.addAll(data);
+            emptyStateTextView.setVisibility(View.INVISIBLE);
+        }
         else
-            Log.i(LOG_TAG, "data returned from the Loader is empty");
+            emptyStateTextView.setVisibility(View.VISIBLE);
+
     }
 
     @Override

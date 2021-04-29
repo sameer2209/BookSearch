@@ -80,17 +80,19 @@ public class QueryUtils {
         try {
             JSONObject jsonResponse = new JSONObject(stringResponse);
             JSONArray itemsArray = jsonResponse.optJSONArray("items");
-            for(int i=0; i<itemsArray.length(); i++){
-                JSONObject volumeInfo = itemsArray.getJSONObject(i).getJSONObject("volumeInfo");
-                String title = volumeInfo.optString("title");
-                String subtitle = volumeInfo.optString("subtitle");
-                String description = volumeInfo.optString("description");
-                String authors = extractAuthorsString(volumeInfo.optJSONArray("authors"));
-                JSONObject imageLinks = volumeInfo.optJSONObject("imageLinks");
-                String thumbnail = null;
-                if(imageLinks != null)
-                    thumbnail = imageLinks.optString("smallThumbnail");
-                books.add(new Book(title, subtitle, description, authors, thumbnail));
+            if (itemsArray != null){
+                for(int i=0; i<itemsArray.length(); i++){
+                    JSONObject volumeInfo = itemsArray.getJSONObject(i).getJSONObject("volumeInfo");
+                    String title = volumeInfo.optString("title");
+                    String subtitle = volumeInfo.optString("subtitle");
+                    String description = volumeInfo.optString("description");
+                    String authors = extractAuthorsString(volumeInfo.optJSONArray("authors"));
+                    JSONObject imageLinks = volumeInfo.optJSONObject("imageLinks");
+                    String thumbnail = null;
+                    if(imageLinks != null)
+                        thumbnail = imageLinks.optString("smallThumbnail");
+                    books.add(new Book(title, subtitle, description, authors, thumbnail));
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
