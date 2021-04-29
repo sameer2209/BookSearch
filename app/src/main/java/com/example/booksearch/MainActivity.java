@@ -7,6 +7,7 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -39,10 +40,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onClick(View v) {
                 Log.i(LOG_TAG, "inside onClick method");
-                bookAdapter = new BookAdapter(getApplicationContext(), R.layout.book_list_item, books);
-                booksList.setAdapter(bookAdapter);
                 searchQuery = String.valueOf(searchQueryEditText.getText());
-                initLoader();
+                if(TextUtils.isEmpty(searchQuery))
+                    searchQueryEditText.setError(getString(R.string.empty_search_query));
+                else {
+                    bookAdapter = new BookAdapter(getApplicationContext(), R.layout.book_list_item, books);
+                    booksList.setAdapter(bookAdapter);
+                    initLoader();
+                }
             }
         });
     }
