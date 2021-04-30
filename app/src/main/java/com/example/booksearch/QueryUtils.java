@@ -30,8 +30,8 @@ public class QueryUtils {
         String searchTerms[] = getSearchTerms(searchQuery);
         String searchTermsString = buildSearchTermsString(searchTerms);
         requestURL.append(searchTermsString);
-//        requestURL.append("&");
-//        requestURL.append("maxResults=10");
+        requestURL.append("&");
+        requestURL.append("maxResults=40");
         Log.i(LOG_TAG, "requestURL string is: " + requestURL);
         return String.valueOf(requestURL);
     }
