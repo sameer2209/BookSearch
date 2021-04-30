@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Book Name"
-            android:textSize="20dp"/>
+            android:textSize="20sp"/>
 
 
         <TextView
@@ -33,6 +33,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Author Name"
-            android:textSize="16dp"/>
+            android:textSize="16sp"/>
     </LinearLayout>
 </LinearLayout>
