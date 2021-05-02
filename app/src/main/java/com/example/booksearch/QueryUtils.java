@@ -1,5 +1,8 @@
 package com.example.booksearch;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -88,9 +91,9 @@ public class QueryUtils {
                     String description = volumeInfo.optString("description");
                     String authors = extractAuthorsString(volumeInfo.optJSONArray("authors"));
                     JSONObject imageLinks = volumeInfo.optJSONObject("imageLinks");
-                    String thumbnail = null;
+                    Bitmap thumbnail = null;
                     if(imageLinks != null)
-                        thumbnail = imageLinks.optString("smallThumbnail");
+                        new DownloadImageAsyncTask(thumbnail).execute(imageLinks.optString("smallThumbnail"));
                     books.add(new Book(title, subtitle, description, authors, thumbnail));
                 }
             }
@@ -171,5 +174,37 @@ public class QueryUtils {
             }
         }
         return output.toString();
+    }
+
+    private static class DownloadImageAsyncTask extends AsyncTask<String, Void, Bitmap>{
+
+        Bitmap thumbnail = null;
+
+        public DownloadImageAsyncTask(Bitmap thumbnail) {
+            this.thumbnail = thumbnail;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+            String imageUrl = urls[0];
+            if(imageUrl == null)
+                return null;
+            Bitmap image = null;
+            try {
+                InputStream inputStream = new URL(imageUrl).openStream();
+                image = BitmapFactory.decodeStream(inputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(LOG_TAG, "IOException thrown by openStream in DownloadImageAsyncTask");
+            }
+
+            return image;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap image) {
+            super.onPostExecute(image);
+            thumbnail = image;
+        }
     }
 }

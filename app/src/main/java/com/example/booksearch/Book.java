@@ -1,13 +1,15 @@
 package com.example.booksearch;
 
+import android.graphics.Bitmap;
+
 public class Book {
     private String mTitle;
     private String mSubtitle;
     private String mDescription;
     private String mAuthors;
-    private String mThumbnail;
+    private Bitmap mThumbnail;
 
-    public Book(String mTitle, String mSubtitle, String mDescription, String mAuthors, String mThumbnail) {
+    public Book(String mTitle, String mSubtitle, String mDescription, String mAuthors, Bitmap mThumbnail) {
         this.mTitle = mTitle;
         this.mSubtitle = mSubtitle;
         this.mDescription = mDescription;
@@ -31,7 +33,7 @@ public class Book {
         return mAuthors;
     }
 
-    public String getmThumbnail() {
+    public Bitmap getmThumbnail() {
         return mThumbnail;
     }
 }
