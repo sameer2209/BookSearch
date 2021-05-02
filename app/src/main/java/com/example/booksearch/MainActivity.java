@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -51,7 +53,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 else {
                     bookAdapter = new BookAdapter(getApplicationContext(), R.layout.book_list_item, books);
                     booksList.setAdapter(bookAdapter);
-                    initLoader();
+                    ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
+                    NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+                    if(networkInfo != null && networkInfo.isConnected())
+                        initLoader();
+                    else{
+                        bookAdapter.clear();
+                        emptyStateTextView.setText(R.string.no_internet_connection);
+                        emptyStateTextView.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
@@ -87,11 +97,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         bookAdapter.clear();
         if(data != null && data.size() != 0){
             bookAdapter.addAll(data);
-            emptyStateTextView.setVisibility(View.INVISIBLE);
+            emptyStateTextView.setVisibility(View.GONE);
         }
-        else
+        else{
+            emptyStateTextView.setText(R.string.empty_result);
             emptyStateTextView.setVisibility(View.VISIBLE);
-
+        }
     }
 
     @Override
