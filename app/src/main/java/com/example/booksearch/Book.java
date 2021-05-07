@@ -7,9 +7,9 @@ public class Book {
     private String mSubtitle;
     private String mDescription;
     private String mAuthors;
-    private Bitmap mThumbnail;
+    private String mThumbnail;
 
-    public Book(String mTitle, String mSubtitle, String mDescription, String mAuthors, Bitmap mThumbnail) {
+    public Book(String mTitle, String mSubtitle, String mDescription, String mAuthors, String mThumbnail) {
         this.mTitle = mTitle;
         this.mSubtitle = mSubtitle;
         this.mDescription = mDescription;
@@ -33,7 +33,8 @@ public class Book {
         return mAuthors;
     }
 
-    public Bitmap getmThumbnail() {
+    public String getmThumbnail() {
         return mThumbnail;
     }
+
 }

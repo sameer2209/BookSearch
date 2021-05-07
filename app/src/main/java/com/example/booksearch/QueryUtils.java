@@ -24,7 +24,7 @@ import java.util.List;
 public class QueryUtils {
 
     private static String LOG_TAG = QueryUtils.class.getName();
-
+//    private static List<Book> books = null;
     /*
     Build search query url string
     */
@@ -91,10 +91,13 @@ public class QueryUtils {
                     String description = volumeInfo.optString("description");
                     String authors = extractAuthorsString(volumeInfo.optJSONArray("authors"));
                     JSONObject imageLinks = volumeInfo.optJSONObject("imageLinks");
-                    Bitmap thumbnail = null;
-                    if(imageLinks != null)
-                        new DownloadImageAsyncTask(thumbnail).execute(imageLinks.optString("smallThumbnail"));
-                    books.add(new Book(title, subtitle, description, authors, thumbnail));
+//                    Bitmap thumbnail = null;
+                    if(imageLinks != null){
+//                        DownloadImageAsyncTask task = new DownloadImageAsyncTask(new Book(title, subtitle, description, authors, thumbnail));
+//                        task.execute(imageLinks.optString("smallThumbnail"));
+                        String thumbnail = imageLinks.optString("smallThumbnail");
+                        books.add(new Book(title, subtitle, description, authors, thumbnail));
+                    }
                 }
             }
         } catch (JSONException e) {
@@ -174,37 +177,5 @@ public class QueryUtils {
             }
         }
         return output.toString();
-    }
-
-    private static class DownloadImageAsyncTask extends AsyncTask<String, Void, Bitmap>{
-
-        Bitmap thumbnail = null;
-
-        public DownloadImageAsyncTask(Bitmap thumbnail) {
-            this.thumbnail = thumbnail;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            String imageUrl = urls[0];
-            if(imageUrl == null)
-                return null;
-            Bitmap image = null;
-            try {
-                InputStream inputStream = new URL(imageUrl).openStream();
-                image = BitmapFactory.decodeStream(inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e(LOG_TAG, "IOException thrown by openStream in DownloadImageAsyncTask");
-            }
-
-            return image;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap image) {
-            super.onPostExecute(image);
-            thumbnail = image;
-        }
     }
 }
