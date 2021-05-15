@@ -19,19 +19,27 @@ import androidx.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class BookAdapter extends ArrayAdapter<Book> {
 
     private final static String LOG_TAG = BookAdapter.class.getName();
+    private HashMap<Integer, Bitmap> thumbnails;
+//    private ArrayList<Integer> thumbnailsDownloading;
 
     public BookAdapter(@NonNull Context context, int resource, @NonNull List<Book> objects) {
         super(context, resource, objects);
+        thumbnails = new HashMap<>();
+//        thumbnailsDownloading = new ArrayList<>();
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+
+        Log.i(LOG_TAG, "inside getView method for position: " + position + " and view: " + convertView);
         Book book = getItem(position);
 
         if(convertView == null)
@@ -47,11 +55,33 @@ public class BookAdapter extends ArrayAdapter<Book> {
         bookAuthor.setText(book.getmAuthors());
 
         ImageView bookThumbnail = convertView.findViewById(R.id.book_thumbnail);
+        bookThumbnail.setImageDrawable(getContext().getDrawable(R.drawable.book_thumbnail));
 //        bookThumbnail.setImageBitmap(DownloadImageSync(book.getmThumbnail()));
-        bookThumbnail.setTag(position);
-        new DownloadImageAsyncTask(bookThumbnail).execute(book.getmThumbnail());
-
+        if(isImageDownloaded(position)){
+            Log.i(LOG_TAG, "inside isImageDownloaded block for position " + position);
+            bookThumbnail.setImageBitmap(thumbnails.get(position));
+        }
+        else {
+            Log.i(LOG_TAG, "inside else block of isImageDownloaded block at position " + position);
+//            if(!isImageDownloading(position)){
+                bookThumbnail.setTag(position);
+                new DownloadImageAsyncTask(bookThumbnail).execute(book.getmThumbnail());
+//            }
+        }
         return convertView;
+    }
+
+//    private boolean isImageDownloading(int position){
+//        if(thumbnailsDownloading.contains(position))
+//            return true;
+//        return false;
+//    }
+
+    private boolean isImageDownloaded(int position){
+        Log.i(LOG_TAG, "checking is ImageDownloaded for position " + position);
+        if(thumbnails.containsKey(position))
+            return true;
+        return false;
     }
 
     private class DownloadImageAsyncTask extends AsyncTask<String, Void, Bitmap> {
@@ -66,6 +96,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
 
         @Override
         protected Bitmap doInBackground(String... url) {
+//            thumbnailsDownloading.add(listItemTag);
             String imageUrl = url[0];
             if(imageUrl == null)
                 return null;
@@ -83,9 +114,15 @@ public class BookAdapter extends ArrayAdapter<Book> {
 
         @Override
         protected void onPostExecute(Bitmap image) {
-            super.onPostExecute(image);
-            if(image != null && thumbnail.getTag().equals(listItemTag))
+//            super.onPostExecute(image);
+//            thumbnailsDownloading.remove((Integer) listItemTag);
+            if(!thumbnails.containsKey(listItemTag)){
+                thumbnails.put(listItemTag, image);
+//                notifyDataSetChanged();
+            }
+            if(image != null && thumbnail.getTag().equals(listItemTag)) {
                 thumbnail.setImageBitmap(image);
+            }
         }
     }
 }
