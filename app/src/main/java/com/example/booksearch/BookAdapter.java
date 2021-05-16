@@ -26,7 +26,7 @@ import java.util.List;
 public class BookAdapter extends ArrayAdapter<Book> {
 
     private final static String LOG_TAG = BookAdapter.class.getName();
-    private HashMap<Integer, Bitmap> thumbnails;
+    private HashMap<String, Bitmap> thumbnails;
 //    private ArrayList<Integer> thumbnailsDownloading;
 
     public BookAdapter(@NonNull Context context, int resource, @NonNull List<Book> objects) {
@@ -57,14 +57,12 @@ public class BookAdapter extends ArrayAdapter<Book> {
         ImageView bookThumbnail = convertView.findViewById(R.id.book_thumbnail);
         bookThumbnail.setImageDrawable(getContext().getDrawable(R.drawable.book_thumbnail));
 //        bookThumbnail.setImageBitmap(DownloadImageSync(book.getmThumbnail()));
-        if(isImageDownloaded(position)){
-            Log.i(LOG_TAG, "inside isImageDownloaded block for position " + position);
-            bookThumbnail.setImageBitmap(thumbnails.get(position));
+        if(isImageDownloaded(book.getmThumbnail())){
+            bookThumbnail.setImageBitmap(thumbnails.get(book.getmThumbnail()));
         }
         else {
-            Log.i(LOG_TAG, "inside else block of isImageDownloaded block at position " + position);
 //            if(!isImageDownloading(position)){
-                bookThumbnail.setTag(position);
+                bookThumbnail.setTag(book.getmThumbnail());
                 new DownloadImageAsyncTask(bookThumbnail).execute(book.getmThumbnail());
 //            }
         }
@@ -77,9 +75,8 @@ public class BookAdapter extends ArrayAdapter<Book> {
 //        return false;
 //    }
 
-    private boolean isImageDownloaded(int position){
-        Log.i(LOG_TAG, "checking is ImageDownloaded for position " + position);
-        if(thumbnails.containsKey(position))
+    private boolean isImageDownloaded(String url){
+        if(thumbnails.containsKey(url))
             return true;
         return false;
     }
@@ -87,11 +84,11 @@ public class BookAdapter extends ArrayAdapter<Book> {
     private class DownloadImageAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
         ImageView thumbnail;
-        int listItemTag;
+        String listItemTag;
 
         public DownloadImageAsyncTask(ImageView thumbnail) {
             this.thumbnail = thumbnail;
-            this.listItemTag = (int) thumbnail.getTag();
+            this.listItemTag = (String) thumbnail.getTag();
         }
 
         @Override
@@ -116,10 +113,8 @@ public class BookAdapter extends ArrayAdapter<Book> {
         protected void onPostExecute(Bitmap image) {
 //            super.onPostExecute(image);
 //            thumbnailsDownloading.remove((Integer) listItemTag);
-            if(!thumbnails.containsKey(listItemTag)){
+            if(!thumbnails.containsKey(listItemTag))
                 thumbnails.put(listItemTag, image);
-//                notifyDataSetChanged();
-            }
             if(image != null && thumbnail.getTag().equals(listItemTag)) {
                 thumbnail.setImageBitmap(image);
             }
