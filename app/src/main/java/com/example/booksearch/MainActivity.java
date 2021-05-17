@@ -6,17 +6,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +68,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         emptyStateTextView.setText(R.string.no_internet_connection);
                         emptyStateTextView.setVisibility(View.VISIBLE);
                     }
+                }
+            }
+        });
+
+        booksList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Book book = bookAdapter.getItem(position);
+                Log.i(LOG_TAG, "current book object is: " + book);
+                Uri bookUri = Uri.parse(book.getmPreviewLink());
+                Intent intent = new Intent(Intent.ACTION_VIEW, bookUri);
+                try {
+                    startActivity(intent);
+                } catch (ActivityNotFoundException e){
+                    Log.d(LOG_TAG, String.valueOf(e));
+                    Toast.makeText(getApplicationContext(), "There is no activity to handle this operation", Toast.LENGTH_SHORT);
                 }
             }
         });

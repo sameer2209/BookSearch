@@ -27,12 +27,12 @@ public class BookAdapter extends ArrayAdapter<Book> {
 
     private final static String LOG_TAG = BookAdapter.class.getName();
     private HashMap<String, Bitmap> thumbnails;
-//    private ArrayList<Integer> thumbnailsDownloading;
+    private ArrayList<String> thumbnailsDownloading;
 
     public BookAdapter(@NonNull Context context, int resource, @NonNull List<Book> objects) {
         super(context, resource, objects);
         thumbnails = new HashMap<>();
-//        thumbnailsDownloading = new ArrayList<>();
+        thumbnailsDownloading = new ArrayList<>();
     }
 
     @NonNull
@@ -57,23 +57,22 @@ public class BookAdapter extends ArrayAdapter<Book> {
         ImageView bookThumbnail = convertView.findViewById(R.id.book_thumbnail);
         bookThumbnail.setImageDrawable(getContext().getDrawable(R.drawable.book_thumbnail));
 //        bookThumbnail.setImageBitmap(DownloadImageSync(book.getmThumbnail()));
-        if(isImageDownloaded(book.getmThumbnail())){
+        if(isImageDownloaded(book.getmThumbnail()))
             bookThumbnail.setImageBitmap(thumbnails.get(book.getmThumbnail()));
-        }
         else {
-//            if(!isImageDownloading(position)){
+            if(!isImageDownloading(book.getmThumbnail())) {
                 bookThumbnail.setTag(book.getmThumbnail());
                 new DownloadImageAsyncTask(bookThumbnail).execute(book.getmThumbnail());
-//            }
+            }
         }
         return convertView;
     }
 
-//    private boolean isImageDownloading(int position){
-//        if(thumbnailsDownloading.contains(position))
-//            return true;
-//        return false;
-//    }
+    private boolean isImageDownloading(String url){
+        if(thumbnailsDownloading.contains(url))
+            return true;
+        return false;
+    }
 
     private boolean isImageDownloaded(String url){
         if(thumbnails.containsKey(url))
@@ -93,7 +92,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
 
         @Override
         protected Bitmap doInBackground(String... url) {
-//            thumbnailsDownloading.add(listItemTag);
+            thumbnailsDownloading.add(listItemTag);
             String imageUrl = url[0];
             if(imageUrl == null)
                 return null;
@@ -111,13 +110,12 @@ public class BookAdapter extends ArrayAdapter<Book> {
 
         @Override
         protected void onPostExecute(Bitmap image) {
-//            super.onPostExecute(image);
-//            thumbnailsDownloading.remove((Integer) listItemTag);
             if(!thumbnails.containsKey(listItemTag))
                 thumbnails.put(listItemTag, image);
             if(image != null && thumbnail.getTag().equals(listItemTag)) {
                 thumbnail.setImageBitmap(image);
             }
+            thumbnailsDownloading.remove(listItemTag);
         }
     }
 }

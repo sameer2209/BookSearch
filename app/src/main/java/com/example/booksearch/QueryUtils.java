@@ -90,13 +90,11 @@ public class QueryUtils {
                     String subtitle = volumeInfo.optString("subtitle");
                     String description = volumeInfo.optString("description");
                     String authors = extractAuthorsString(volumeInfo.optJSONArray("authors"));
+                    String previewLink = volumeInfo.optString("previewLink");
                     JSONObject imageLinks = volumeInfo.optJSONObject("imageLinks");
-//                    Bitmap thumbnail = null;
                     if(imageLinks != null){
-//                        DownloadImageAsyncTask task = new DownloadImageAsyncTask(new Book(title, subtitle, description, authors, thumbnail));
-//                        task.execute(imageLinks.optString("smallThumbnail"));
                         String thumbnail = imageLinks.optString("smallThumbnail");
-                        books.add(new Book(title, subtitle, description, authors, thumbnail));
+                        books.add(new Book(title, subtitle, description, authors, thumbnail, previewLink));
                     }
                 }
             }
